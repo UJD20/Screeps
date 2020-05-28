@@ -1,4 +1,5 @@
 import { ErrorMapper } from "utils/ErrorMapper";
+import { SmartRoom } from "./smartroom";
 
 // When compiling TS to JS and bundling with rollup, the line numbers and file names in error messages change
 // This utility uses source maps to get the line numbers and file names of the original, TS source code
@@ -13,15 +14,28 @@ import { ErrorMapper } from "utils/ErrorMapper";
 
 export const loop = ErrorMapper.wrapLoop(() => {
   console.log(`Current game tick is ${Game.time}`);
-  deleteDead(); // Automatically delete memory of missing creeps
 
+  deleteDeadCreeps(); // Automatically delete memory of missing creeps
+
+  // tell existing owned rooms to take care of themselves
+  const rooms = SmartRoom.prioritizedRooms();
+  for (const priority in rooms)
+  {
+    for (let roomIndex = 0; roomIndex < rooms[priority].length; roomIndex++)
+    {
+      const room: SmartRoom = rooms[priority][roomIndex];
+      room.maintain();
+    }
+  }
+
+  // expand?
 });
 
 
 /**
  * Get rid of creeps that no longer exist
  */
-function deleteDead()
+function deleteDeadCreeps()
 {
   for (const name in Memory.creeps) {
     if (!(name in Game.creeps)) {
