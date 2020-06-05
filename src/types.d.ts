@@ -1,20 +1,26 @@
-// example declaration file - remove these and add your own custom typings
-
 // memory extension samples
-interface CreepMemory {
-  role: string;
-  room: string;
-  working: boolean;
-}
 
-interface Memory {
+interface Memory
+{
   uuid: number;
   log: any;
+  creepIds: { [type: string]: number };
 }
 
+declare interface CreepMemory
+{
+  roleId: string,
+  idleTarget?: RoomObject
+}
+declare interface FlagMemory { [name: string]: any }
+declare interface SpawnMemory { [name: string]: any }
+declare interface RoomMemory { [name: string]: any }
+
 // `global` extension samples
-declare namespace NodeJS {
-  interface Global {
+declare namespace NodeJS
+{
+  interface Global
+  {
     log: any;
   }
 }
